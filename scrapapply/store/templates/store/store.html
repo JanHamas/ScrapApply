@@ -1,0 +1,181 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Store{% endblock %}
+
+{% block content %}
+<!-- Hero Section with background color -->
+<div class="py-20 px-6 md:px-10">
+    <div class="max-w-5xl mx-auto text-center">
+        <h1 class="text-3xl md:text-5xl font-bold text-black leading-tight mb-6">
+            Your free, all-in-one platform for scraping, automation, and AI job applications
+        </h1>
+        <h2 class="text-xl md:text-2xl font-semibold text-black mb-4">
+            No limits. No paywalls. Just pure automation freedom.
+        </h2>
+        <p class="text-base md:text-lg text-black">
+            ScrapApply gives <span class="font-semibold">everyone</span> the power to build, run, and share smart scrapers, automation tools, and AI-powered job bots — all for free.
+            Whether you're a developer, freelancer, job seeker, or just curious, ScrapApply feels like it was made just for you.
+        </p>
+    </div>
+</div>
+
+<!-- search box for smartactors -->
+<div class="flex flex-col md:flex-row items-center justify-center px-4 py-6 gap-x-2 gap-y-3">
+    <input type="text" placeholder="Search..." class="border-2 rounded-2xl px-4 py-2 w-1/1
+     md:w-120">
+    <button class="bg-black text-amber-50 font-semibold px-6 py-2 rounded-2xl cursor-pointer">
+        Search
+    </button>
+</div>
+
+<!-- smartactors -->
+<div class="wrapper grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4">
+
+    <!-- Actor 1: Indeed -->
+    <a href="{% url 'indeed_scrapper' %}" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center rounded-lg">
+                    <img src="{% static 'store/actors_icon/indeed.png' %}" alt="Indeed Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Indeed Jobs Scraper</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/Indeed-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Scrape jobs from Indeed with AI match %, filter big companies, and get detailed info like company, position, link, locations, salary and description.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 2: LinkedIn -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-blue-200 rounded-lg">
+                    <img src="{% static 'store/actors_icon/linkedin.png' %}" alt="LinkedIn Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">LinkedIn Scraper</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/LinkedIn-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Collect LinkedIn job data, remove duplicates, skip large orgs, and capture full job info smartly.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 3: TikTok -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-pink-200 rounded-lg">
+                    <img src="{% static 'store/actors_icon/tiktok.png' %}" alt="TikTok Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">TikTok Trends</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/TikTok-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Discover trending videos and gather insights like views, likes, sound, captions, and hashtags.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 4: Instagram -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-gradient-to-r from-pink-400 to-yellow-400 rounded-lg">
+                    <img src="{% static 'store/actors_icon/instagram.png' %}" alt="Instagram Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Instagram Data</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/Insta-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Get posts, hashtags, captions, and account info from public Instagram profiles.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 5: Twitter -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-blue-400 rounded-lg">
+                    <img src="{% static 'store/actors_icon/twitter.png' %}" alt="Twitter Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Twitter Crawler</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/Twitter-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Track tweets, hashtags, replies, and followers from public profiles and hashtags.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 6: YouTube -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-red-400 rounded-lg">
+                    <img src="{% static 'store/actors_icon/youtube.png' %}" alt="YouTube Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">YouTube Analyzer</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/YT-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Scrape video metadata, comments, likes, and stats from YouTube channels and playlists.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 7: Upwork -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-green-300 rounded-lg">
+                    <img src="{% static 'store/actors_icon/upwork.png' %}" alt="Upwork Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Upwork Jobs Bot</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/Upwork-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Get freelance jobs from Upwork by keyword, category, and filter for hourly or fixed.
+            </p>
+        </div>
+    </a>
+
+    <!-- Actor 8: Fiverr -->
+    <a href="#" class="block h-full">
+        <div class="flex flex-col justify-between h-full border-2 border-gray-300 hover:shadow-lg rounded-xl px-6 py-6 bg-white transition">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-11 h-11 flex items-center justify-center bg-green-500 rounded-lg">
+                    <img src="{% static 'store/actors_icon/fiverr.png' %}" alt="Fiverr Icon" class="w-full h-full object-contain">
+                </div>
+                <div>
+                    <h2 class="font-bold text-lg">Fiverr Services Scraper</h2>
+                    <p class="font-light text-xs italic text-gray-500">Hamas/Fiverr-Scraper</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-700">
+                Scrape gigs by category, ratings, pricing, and seller info to analyze market trends on Fiverr.
+            </p>
+        </div>
+    </a>
+
+</div>
+
+{% endblock %}
