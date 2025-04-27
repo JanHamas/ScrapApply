@@ -1,6 +1,314 @@
-{% extends 'core/base.html' %}
-{% block title %}Indeed Scrapper{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Indeed Scraper{% endblock %}
 
 {% block content %}
-<h1 class="mt-300">Welcome to indeed Scrapper</h1>
+<style>
+  /* Hide scrollbar for all browsers */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;     
+  }
+  
+  /* Table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    table-layout: fixed; /* Keep fixed */
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  /* Fixed column widths */
+  th:nth-child(1), td:nth-child(1) { width: 20%; } /* Company */
+  th:nth-child(2), td:nth-child(2) { width: 30%; } /* Links */
+  th:nth-child(3), td:nth-child(3) { width: 20%; } /* Job Title */
+  th:nth-child(4), td:nth-child(4) { width: 15%; } /* Location */
+  th:nth-child(5), td:nth-child(5) { width: 15%; } /* Match % */
+  
+  
+  .bg-gray-700 { background-color: #4a4a4a; color: #fff; }
+  .bg-green-600 { background-color: #16c784; color: #fff; }
+  
+  .bg-gray-700:hover { background-color: #333; }
+  .bg-green-600:hover { background-color: #0e9a5c; }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .table-container {
+      max-height: 300px;
+    }
+  
+    /* Adjust column widths for mobile */
+    th:nth-child(1), td:nth-child(1) { width: 25%; }
+    th:nth-child(2), td:nth-child(2) { width: 30%; }
+    th:nth-child(3), td:nth-child(3) { width: 20%; }
+    th:nth-child(4), td:nth-child(4) { width: 15%; }
+    th:nth-child(5), td:nth-child(5) { width: 10%; }
+  }
+
+  
+/* loader */
+.loader {
+  width: 45px;
+  height: 15px;
+  display: block;
+  margin: auto;
+  background-repeat: no-repeat;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.loader::before {
+  content: '';
+  left: -2px;
+  bottom: 0px;
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: green;
+  background-image: radial-gradient(circle 5px at 12.5px 12.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 12.5px 0px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 0px 12.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 25px 12.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 12.5px 25px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 21px 3.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 21px 21px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 3.5px 21px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 2.5px at 3.5px 3.5px, #FFF 100%, transparent 0);
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  animation: rotationBack 3s linear infinite;
+}
+
+.loader::after {
+  content: '';
+  left: 22px;
+  bottom: 0px;
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background-color: green;
+  background-image: radial-gradient(circle 3.5px at 8.5px 8.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 8.5px 0px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 0px 8.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 17px 8.5px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 8.5px 17px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 14px 2px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 14px 14px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 2px 14px, #FFF 100%, transparent 0), 
+                   radial-gradient(circle 1.75px at 2px 2px, #FFF 100%, transparent 0);
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  animation: rotationBack 4s linear infinite reverse;
+}
+
+@keyframes rotationBack {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+textarea::placeholder {
+  font-size: 10px; /* Very small placeholder */
+  color: #9ca3af; /* Light gray (same as text-gray-400) */
+}
+input::placeholder {
+  font-size: 10px; /* Very small placeholder */
+  color: #9ca3af; /* Light gray (same as text-gray-400) */
+}
+  </style>
+  
+<!-- Container -->
+<div class="p-2 bg-white shadow-lg rounded-2xl">
+<!-- Header Section -->
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 mb-8">
+  <div class="flex items-center gap-5">
+    <img src="{% static 'indeed/images/indeed.png' %}" alt="Indeed Logo" class="w-12 h-12 object-contain">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-800">Indeed Scraper with Advanced AI Matching</h1>
+      <p class="text-gray-600 text-sm sm:text-base">
+        Scrape job listings with full details and AI-based resume match score.
+        <a href="https://youtube.com" class="text-blue-600 underline hover:text-blue-800 ml-1" target="_blank">See setup guide</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Action Buttons + Loader / Status Message -->
+  <div class="action flex flex-col sm:flex-row gap-3 sm:gap-4">
+    <div class="flex gap-3">
+      <button onclick="copyTable()" class="flex items-center bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-800 text-sm transition-colors">
+        <span class="mr-1">📋</span> Copy
+      </button>
+      <a href="#" class="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 text-sm transition-colors">
+        <span class="mr-1">⬇️</span> Excel
+      </a>
+    </div>
+
+    <!-- Scraper Status Area -->
+    <div id="scraper-status" class="mt-3 sm:mt-0">
+      {% if is_scraper_running %}
+        <div class="loader"></div>
+      {% elif scraper_complete_message %}
+        <div class="bg-green-100 text-green-800 text-sm font-medium px-4 py-2 rounded-md">
+          {{ scraper_complete_message }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <!-- Form Section -->
+    <div class="space-y-4">
+  <!-- Django Messages (for running errors) -->
+  <div id="error-messages" style="color: red;">
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+  
+      <form method="post">
+        {% csrf_token %}
+      
+        <!-- about -->
+        <div>
+          <span class="text-sm">About Me</span>
+          <textarea required name="Aboutme" placeholder="Experienced Full-Stack Developer with 8+ years in .NET Core, C#, Angular, React, SQL Server, Azure, and AWS. Skilled in building secure, scalable web apps using DDD, design patterns, and cloud-native architecture. Strong in DevOps, performance optimization, and team collaboration. Authorized to work in the U.S.
+      
+Skills
+.NET Core, C#, ASP.NET, Angular, React, SQL Server, Azure, AWS, Entity Framework, NHibernate, DDD, Design Patterns, Docker, Kubernetes, CI/CD, DevOps, REST APIs, Unit Testing, Secure Coding" rows="6"
+            class="w-full text-xs scrollbar-hide p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-400">{{ form_data.about_me|default_if_none:'' }}</textarea>
+        </div>
+      
+        <!-- job urls -->
+        <div>
+          <span class="text-sm">Job URLs</span>
+          <textarea required name="job_urls" placeholder="https://www.indeed.com/jobs?q=.net&l=United%20States&fromage=3&from=searchOnDesktopSerp
+https://www.indeed.com/jobs?q=python&l=United+States&fromage=1&from=searchOnDesktopSerp
+https://www.indeed.com/jobs?q=c%23%20.net&l=United%20States&fromage=3&from=searchOnDesktopSerp" rows="5"
+            class="w-full text-xs scrollbar-hide p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-400">{{ form_data.job_urls|default_if_none:'' }}</textarea>
+        </div>
+      
+        <!-- companies to ignore -->
+        <div>
+          <span class="text-sm">Companies to ignore</span>
+          <textarea name="ignore_companies" placeholder="Apple
+Meta
+Amazon
+Microsoft" rows="4"
+            class="w-full text-xs scrollbar-hide p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-400">{{ form_data.ignore_companies|default_if_none:'' }}</textarea>
+        </div>
+      
+        <!-- jobs per company & max items -->
+        <div class="flex items-end gap-6">
+          <div class="flex-1">
+            <span class="text-sm block mb-1">Jobs per company (optional)</span>
+            <input name="jobs_per_company" type="number" min="1" max="10" placeholder="(1-10)"
+              value="{{ form_data.jobs_per_company|default_if_none:'' }}"
+              class="w-full text-xs scrollbar-hide p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+      
+          <div class="flex-1">
+            <span class="text-xs  block mb-1">Max items (optional)</span>
+            <input name="max_items" type="number" min="1" max="6000" placeholder="(1-6000)"
+              value="{{ form_data.max_items|default_if_none:'' }}"
+              class="w-full text-sm scrollbar-hide p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>      
+        </div>
+        <button type="submit" name="run_scraper" value="1"
+        class="h-[48px] bg-blue-600 mt-2 text-white px-6 rounded-md hover:bg-blue-700 transition">
+        Run Scraper
+      </button>     
+          
+      </form>
+    </div>
+    
+    <!-- Output Table Section -->
+    <div class="flex flex-col gap-4 md:mt-6">
+      <!-- Output Table -->
+      <div class="table-container overflow-y-auto max-h-[400px] scrollbar-hide border rounded-lg">
+        <!-- From Uiverse.io by Shoh2008 --> 
+        <table class="min-w-full">
+          <thead class="bg-gray-200 text-gray-700 sticky top-0">
+            <tr>
+              <th class="px-4 py-2">Company</th>
+              <th class="px-4 py-2">Links</th>
+              <th class="px-4 py-2">Job Title</th>
+              <th class="px-4 py-2">Location</th>
+              <th class="px-4 py-2">Match %</th>
+            </tr>
+          </thead>
+          <tbody id="job-results">
+            <!-- Example rows -->
+            <tr class="border-b">
+              <td class="px-4 py-2">Googlljkdsfksdfasjfaslfjsadfjdsa;lfe</td>
+              <td class="px-4 py-2">https://indeed.com/viewjob?jk=123</td>
+              <td class="px-4 py-2">Frontend Developer</td>
+              <td class="px-4 py-2">Remote</td>
+              <td class="px-4 py-2">89%</td>
+            </tr>
+            <!-- More rows will go here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- JS for buttons -->
+<script>
+function copyTable() {
+  const table = document.getElementById("job-results");
+  const text = Array.from(table.rows)
+    .map(row => Array.from(row.cells).map(cell => cell.innerText).join("\t"))
+    .join("\n");
+  navigator.clipboard.writeText(text).then(() => alert("Copied!"));
+}
+
+
+//  
+setInterval(function() {
+    fetch("{% url 'check_scraper_status' %}")
+    .then(response => response.json())
+    .then(data => {
+        let statusDiv = document.getElementById('scraper-status');
+        let errorDiv = document.getElementById('error-messages'); // find the error div
+        
+        if (data.running) {
+            statusDiv.innerHTML = '<div class="loader"></div>';
+        } else if (data.message) {
+            statusDiv.innerHTML = `<div class="alert alert-success"><p>${data.message}</p></div>`;
+            if (errorDiv) {
+                errorDiv.innerHTML = ''; // 🧹 clear the error messages!
+            }
+        }
+    });
+}, 5000);
+</script>
 {% endblock %}
