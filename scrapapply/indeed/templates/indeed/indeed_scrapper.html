@@ -159,9 +159,11 @@ input::placeholder {
       <button onclick="copyTable()" class="flex items-center bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-800 text-sm transition-colors">
         <span class="mr-1">📋</span> Copy
       </button>
-      <a href="#" class="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 text-sm transition-colors">
-        <span class="mr-1">⬇️</span> Excel
-      </a>
+      <a href="/static/indeed/download/indeed_jobs.xlsx" download 
+   class="flex items-center bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 text-sm transition-colors">
+   <span class="mr-1">⬇️</span> Export Excel
+</a>
+
     </div>
 
     <!-- Scraper Status Area -->
@@ -236,7 +238,7 @@ Microsoft" rows="4"
           </div>      
         </div>
         <button type="submit" name="run_scraper" value="1"
-        class="h-[48px] bg-blue-600 mt-2 text-white px-6 rounded-md hover:bg-blue-700 transition">
+        class="h-[48px] bg-blue-600 mt-2 text-white px-6 cursor-pointer rounded-md hover:bg-blue-700 transition">
         Run Scraper
       </button>     
           

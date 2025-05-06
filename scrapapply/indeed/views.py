@@ -1,25 +1,22 @@
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from .scrapper import IndeedJobScraper
-from .models import FormData
 from django.contrib import messages
-import threading
+from .models import FormData
+from .tasks import run_scraper  # Import Celery task
 
 # Global variables
-is_scraper_running = False
 scraper_complete_message = ""
 
 @csrf_exempt
 def indeed_scrapper(request):
-    global is_scraper_running, scraper_complete_message
+    global scraper_complete_message
 
     if request.method == 'POST':
-        if is_scraper_running:
-            messages.error(request, 'Scraper is already running. Please wait!')
-            return redirect('indeed_scrapper')
-
-        is_scraper_running = True
+        # Check if the scraper task is already running
+        # Note: Celery tasks don't need to track a running flag
+        #       because Celery handles background tasks
+        scraper_complete_message = "Scraping has started!"
 
         # Get form data
         about_me = request.POST.get('Aboutme', '').strip()
@@ -38,8 +35,9 @@ def indeed_scrapper(request):
             jobs_per_company = 3
             max_items = 50
 
+        # Save the form data into the database
         FormData.objects.all().delete()
-        form_data = FormData.objects.create(
+        FormData.objects.create(
             about_me=about_me,
             job_urls="\n".join(job_urls_list),
             ignore_companies="\n".join(ignore_companies_list),
@@ -47,38 +45,27 @@ def indeed_scrapper(request):
             max_items=max_items
         )
 
-        def run_scraper():
-            global is_scraper_running, scraper_complete_message
-            try:
-                scraper = IndeedJobScraper()
-                scraper.extract_jobs(
-                    about_me=about_me,
-                    job_urls_list=job_urls_list,
-                    ignore_companies_list=ignore_companies_list,
-                    jobs_per_company=jobs_per_company,
-                    max_items=max_items
-                )
-                scraper_complete_message = "Scraping completed successfully!"
-            except Exception as e:
-                scraper_complete_message = f"Scraping failed: {str(e)}"
-            finally:
-                is_scraper_running = False
+        # Start Celery task for scraping in the background
+        run_scraper.delay(  # Use .delay() to call the Celery task
+            about_me=about_me,
+            job_urls_list=job_urls_list,
+            ignore_companies_list=ignore_companies_list,
+            jobs_per_company=jobs_per_company,
+            max_items=max_items
+        )
 
-        threading.Thread(target=run_scraper).start()
         return redirect('indeed_scrapper')
 
     form_data = FormData.objects.last()
 
-    return render(request, 'indeed/indeed.html', {
+    return render(request, 'indeed/indeed_scrapper.html', {
         'form_data': form_data,
-        'is_scraper_running': is_scraper_running,
         'scraper_complete_message': scraper_complete_message,
     })
 
-# New view to check scraper status
+
+# View to check scraper status
 def check_scraper_status(request):
-    global is_scraper_running, scraper_complete_message
     return JsonResponse({
-        'running': is_scraper_running,
         'message': scraper_complete_message
     })
